@@ -14,7 +14,7 @@ private:
     static const uint CONTROL_VERTEX_QUANTITY = 80;
     Vertex controlVertexes[CONTROL_VERTEX_QUANTITY];
 
-    static const uint CURVE_VERTEX_QUANTITY = 25;
+    static const uint CURVE_VERTEX_QUANTITY = 28;
     Vertex curveVertexes[CURVE_VERTEX_QUANTITY];
 
     uint controlVertexCount = 0;
@@ -51,45 +51,45 @@ void Curves::Init()
 
 void Curves::Update()
 {
+    float cx = float(window->CenterX());
+    float cy = float(window->CenterY());
+    float mx = float(input->MouseX());
+    float my = float(input->MouseY());
+
+    float x = (mx - cx) / cx;
+    float y = (cy - my) / cy;
+
     if (input->KeyPress(VK_ESCAPE))
         window->Close();
 
+    controlVertexes[controlVertexIndex] = { XMFLOAT3(x, y, 0.0f), XMFLOAT4(Colors::Blue) };
+
     if (input->KeyPress(VK_LBUTTON))
     {
-        float cx = float(window->CenterX());
-        float cy = float(window->CenterY());
-        float mx = float(input->MouseX());
-        float my = float(input->MouseY());
-        
-        float x = (mx - cx) / cx;
-        float y = (cy - my) / cy;
-
-        controlVertexes[controlVertexIndex] = { XMFLOAT3(x, y, 0.0f), XMFLOAT4(Colors::Blue) };
-
         controlVertexIndex = (controlVertexIndex + 1) % CONTROL_VERTEX_QUANTITY;
         
         if (controlVertexCount < CONTROL_VERTEX_QUANTITY)
             controlVertexCount++;
+    }
 
-        if (controlVertexCount == 4) {  
-            curveVertexes[0] = controlVertexes[0];
-           
-            double tIncrement = 1.0 / (CURVE_VERTEX_QUANTITY - 1);
+    if (controlVertexCount > 1) {
+        curveVertexes[0] = controlVertexes[0];
 
-            for (uint i = 1; i < CURVE_VERTEX_QUANTITY - 1; i++) {
-                curveVertexes[i] = generateBezierPoint(&controlVertexes[0].Pos, &controlVertexes[1].Pos, &controlVertexes[2].Pos, &controlVertexes[3].Pos, i * tIncrement);
-            }
+        double tIncrement = 1.0 / (CURVE_VERTEX_QUANTITY - 1);
 
-            curveVertexes[CURVE_VERTEX_QUANTITY - 1] = controlVertexes[CONTROL_VERTEX_QUANTITY - 1];
+        for (uint i = 1; i < CURVE_VERTEX_QUANTITY - 1; i++) {
+            curveVertexes[i] = generateBezierPoint(&controlVertexes[0].Pos, &controlVertexes[1].Pos, &controlVertexes[2].Pos, &controlVertexes[3].Pos, i * tIncrement);
         }
 
-        graphics->ResetCommands();
-        graphics->Copy(controlVertexes, controlVertexGeometry->vertexBufferSize, controlVertexGeometry->vertexBufferUpload, controlVertexGeometry->vertexBufferGPU);
-        graphics->Copy(curveVertexes, curveGeometry->vertexBufferSize, curveGeometry->vertexBufferUpload, curveGeometry->vertexBufferGPU);
-        graphics->SubmitCommands();
-
-        Display();
+        curveVertexes[CURVE_VERTEX_QUANTITY - 1] = controlVertexes[CONTROL_VERTEX_QUANTITY - 1];
     }
+
+    graphics->ResetCommands();
+    graphics->Copy(controlVertexes, controlVertexGeometry->vertexBufferSize, controlVertexGeometry->vertexBufferUpload, controlVertexGeometry->vertexBufferGPU);
+    graphics->Copy(curveVertexes, curveGeometry->vertexBufferSize, curveGeometry->vertexBufferUpload, curveGeometry->vertexBufferGPU);
+    graphics->SubmitCommands();
+
+    Display();
 }
 
 void Curves::Display()
@@ -149,7 +149,6 @@ void Curves::BuildRootSignature()
         &serializedRootSig,
         &error));
 
-    // cria uma assinatura raiz vazia
     ThrowIfFailed(graphics->Device()->CreateRootSignature(
         0,
         serializedRootSig->GetBufferPointer(),
