@@ -1,0 +1,14 @@
+﻿  compilation object save succeeded; see C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Shaders\Pixel.cso
+  compilation object save succeeded; see C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Shaders\Vertex.cso
+  App.cpp
+  Engine.cpp
+  Error.cpp
+  Graphics.cpp
+  Input.cpp
+  Mesh.cpp
+  Timer.cpp
+  Curves.cpp
+  Window.cpp
+C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Curves.cpp(80,158): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Curves.cpp(131,95): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
+  Curves.vcxproj -> C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\x64\Debug\Curves.exe
