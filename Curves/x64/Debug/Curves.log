@@ -1,4 +1,4 @@
 ﻿  Curves.cpp
-C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Curves.cpp(81,154): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
-C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Curves.cpp(131,95): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
+C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Curves.cpp(93,23): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\Curves\Curves.cpp(147,95): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
   Curves.vcxproj -> C:\Users\lucas\Documents\Repositórios GitHub\BezierCurves\x64\Debug\Curves.exe

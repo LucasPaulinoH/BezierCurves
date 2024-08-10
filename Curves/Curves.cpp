@@ -14,11 +14,16 @@ private:
     static const uint CONTROL_VERTEX_QUANTITY = 80;
     Vertex controlVertexes[CONTROL_VERTEX_QUANTITY];
 
-    static const uint CURVE_VERTEX_QUANTITY = 28;
-    Vertex curveVertexes[CURVE_VERTEX_QUANTITY];
+    static const uint SINGLE_CURVE_VERTEX_QUANTITY = 25;
+    static const uint CURVE_QUANTITY = 20;
+    static const uint TOTAL_CURVE_VERTEX_QUANTITY = CURVE_QUANTITY * SINGLE_CURVE_VERTEX_QUANTITY;
+
+    Vertex curveVertexes[TOTAL_CURVE_VERTEX_QUANTITY];
 
     uint controlVertexCount = 0;
     uint controlVertexIndex = 0;
+
+    uint curveVertexesToRender = 0;
 
 public:
     void Init();
@@ -38,7 +43,7 @@ void Curves::Init()
     graphics->ResetCommands();
 
     const uint CONTROL_VERTEX_BUFFER_SIZE = CONTROL_VERTEX_QUANTITY * sizeof(Vertex);
-    const uint CURVE_VERTEX_BUFFER_SIZE = CURVE_VERTEX_QUANTITY * sizeof(Vertex);
+    const uint CURVE_VERTEX_BUFFER_SIZE = TOTAL_CURVE_VERTEX_QUANTITY * sizeof(Vertex);
 
     controlVertexGeometry = new Mesh(CONTROL_VERTEX_BUFFER_SIZE, sizeof(Vertex));
     curveGeometry = new Mesh(CURVE_VERTEX_BUFFER_SIZE, sizeof(Vertex));
@@ -72,16 +77,27 @@ void Curves::Update()
             controlVertexCount++;
     }
 
-    if (controlVertexCount > 1) {
-        curveVertexes[0] = controlVertexes[0];
+    if (controlVertexCount > 2) {
+        double tIncrement = 1.0 / (SINGLE_CURVE_VERTEX_QUANTITY - 1);
 
-        double tIncrement = 1.0 / (CURVE_VERTEX_QUANTITY - 1);
+        uint curveVertexCount = 0;
+        uint idk = 0;
 
-        for (uint i = 1; i < CURVE_VERTEX_QUANTITY - 1; i++) {
-            curveVertexes[i] = generateBezierPoint(&controlVertexes[0].Pos, &controlVertexes[1].Pos, &controlVertexes[2].Pos, &controlVertexes[3].Pos, i * tIncrement);
+        for (uint i = 0; i < CURVE_QUANTITY; i++) {
+            for (uint j = 0; j < SINGLE_CURVE_VERTEX_QUANTITY; j++) {
+                curveVertexes[curveVertexCount] = generateBezierPoint(
+                    &controlVertexes[idk].Pos, 
+                    &controlVertexes[idk + 1].Pos, 
+                    &controlVertexes[idk + 2].Pos, 
+                    &controlVertexes[idk + 3].Pos, 
+                    j * tIncrement
+                );
+                curveVertexCount++;
+            }
+            idk += 3;
         }
 
-        curveVertexes[CURVE_VERTEX_QUANTITY - 1] = controlVertexes[CONTROL_VERTEX_QUANTITY - 1];
+        curveVertexesToRender = curveVertexCount;
     }
 
     graphics->ResetCommands();
@@ -103,7 +119,7 @@ void Curves::Display()
     graphics->CommandList()->DrawInstanced(controlVertexCount, 1, 0, 0);
 
     graphics->CommandList()->IASetVertexBuffers(0, 1, curveGeometry->VertexBufferView());
-    graphics->CommandList()->DrawInstanced(CURVE_VERTEX_QUANTITY - 1, 1, 0, 0);
+    graphics->CommandList()->DrawInstanced(curveVertexesToRender, 1, 0, 0);
 
     graphics->Present();    
 }
